@@ -43,8 +43,8 @@ function OverviewPage() {
         <StatCard label="Zones" count={data.zones} icon={Globe} to="/dashboard/zones" />
         <StatCard label="Workers" count={data.workers} icon={Zap} to="/dashboard/workers" />
         <StatCard label="Pages" count={data.pages} icon={FileText} to="/dashboard/pages" />
-        <StatCard label="R2 Buckets" count={data.r2Buckets} icon={Archive} />
-        <StatCard label="KV Namespaces" count={data.kvNamespaces} icon={Database} />
+        <StatCard label="R2 Buckets" count={data.r2Buckets} icon={Archive} to="/dashboard/r2" />
+        <StatCard label="KV Namespaces" count={data.kvNamespaces} icon={Database} to="/dashboard/kv" />
       </div>
     </div>
   );

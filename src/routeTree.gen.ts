@@ -14,7 +14,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardZonesRouteImport } from './routes/dashboard/zones'
 import { Route as DashboardWorkersRouteImport } from './routes/dashboard/workers'
+import { Route as DashboardR2RouteImport } from './routes/dashboard/r2'
 import { Route as DashboardPagesRouteImport } from './routes/dashboard/pages'
+import { Route as DashboardKvRouteImport } from './routes/dashboard/kv'
+import { Route as DashboardAiGatewayRouteImport } from './routes/dashboard/ai-gateway'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -41,23 +44,44 @@ const DashboardWorkersRoute = DashboardWorkersRouteImport.update({
   path: '/workers',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardR2Route = DashboardR2RouteImport.update({
+  id: '/r2',
+  path: '/r2',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardPagesRoute = DashboardPagesRouteImport.update({
   id: '/pages',
   path: '/pages',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardKvRoute = DashboardKvRouteImport.update({
+  id: '/kv',
+  path: '/kv',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAiGatewayRoute = DashboardAiGatewayRouteImport.update({
+  id: '/ai-gateway',
+  path: '/ai-gateway',
   getParentRoute: () => DashboardRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
+  '/dashboard/kv': typeof DashboardKvRoute
   '/dashboard/pages': typeof DashboardPagesRoute
+  '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/workers': typeof DashboardWorkersRoute
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
+  '/dashboard/kv': typeof DashboardKvRoute
   '/dashboard/pages': typeof DashboardPagesRoute
+  '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/workers': typeof DashboardWorkersRoute
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -66,7 +90,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
+  '/dashboard/kv': typeof DashboardKvRoute
   '/dashboard/pages': typeof DashboardPagesRoute
+  '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/workers': typeof DashboardWorkersRoute
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard/': typeof DashboardIndexRoute
@@ -76,14 +103,20 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
+    | '/dashboard/ai-gateway'
+    | '/dashboard/kv'
     | '/dashboard/pages'
+    | '/dashboard/r2'
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard/ai-gateway'
+    | '/dashboard/kv'
     | '/dashboard/pages'
+    | '/dashboard/r2'
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard'
@@ -91,7 +124,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/dashboard'
+    | '/dashboard/ai-gateway'
+    | '/dashboard/kv'
     | '/dashboard/pages'
+    | '/dashboard/r2'
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard/'
@@ -139,6 +175,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardWorkersRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/r2': {
+      id: '/dashboard/r2'
+      path: '/r2'
+      fullPath: '/dashboard/r2'
+      preLoaderRoute: typeof DashboardR2RouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/pages': {
       id: '/dashboard/pages'
       path: '/pages'
@@ -146,18 +189,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardPagesRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/kv': {
+      id: '/dashboard/kv'
+      path: '/kv'
+      fullPath: '/dashboard/kv'
+      preLoaderRoute: typeof DashboardKvRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/ai-gateway': {
+      id: '/dashboard/ai-gateway'
+      path: '/ai-gateway'
+      fullPath: '/dashboard/ai-gateway'
+      preLoaderRoute: typeof DashboardAiGatewayRouteImport
+      parentRoute: typeof DashboardRoute
+    }
   }
 }
 
 interface DashboardRouteChildren {
+  DashboardAiGatewayRoute: typeof DashboardAiGatewayRoute
+  DashboardKvRoute: typeof DashboardKvRoute
   DashboardPagesRoute: typeof DashboardPagesRoute
+  DashboardR2Route: typeof DashboardR2Route
   DashboardWorkersRoute: typeof DashboardWorkersRoute
   DashboardZonesRoute: typeof DashboardZonesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAiGatewayRoute: DashboardAiGatewayRoute,
+  DashboardKvRoute: DashboardKvRoute,
   DashboardPagesRoute: DashboardPagesRoute,
+  DashboardR2Route: DashboardR2Route,
   DashboardWorkersRoute: DashboardWorkersRoute,
   DashboardZonesRoute: DashboardZonesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
