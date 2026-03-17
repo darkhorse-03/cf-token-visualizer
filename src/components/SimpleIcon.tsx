@@ -15,9 +15,11 @@ export type SimpleIconName = keyof typeof icons;
 export function SimpleIcon({
   name,
   className = "size-4",
+  useBrandColor = true,
 }: {
   name: SimpleIconName;
   className?: string;
+  useBrandColor?: boolean;
 }) {
   const icon = icons[name];
   return (
@@ -26,7 +28,10 @@ export function SimpleIcon({
       viewBox="0 0 24 24"
       className={className}
       fill="currentColor"
-      dangerouslySetInnerHTML={{ __html: icon.path }}
-    />
+      aria-label={icon.title}
+      style={useBrandColor ? { color: `#${icon.hex}` } : undefined}
+    >
+      <path d={icon.path} />
+    </svg>
   );
 }

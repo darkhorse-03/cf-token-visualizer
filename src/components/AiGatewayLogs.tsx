@@ -82,8 +82,8 @@ export function AiGatewayLogs({ gatewayId }: { gatewayId: string }) {
                 </td>
                 <td className="font-mono text-xs">{log.model || "—"}</td>
                 <td className="text-xs">
-                  <span className="text-base-content/50">in:</span> {log.tokens_in}{" "}
-                  <span className="text-base-content/50">out:</span> {log.tokens_out}
+                  <span className="text-base-content/70">in:</span> {log.tokens_in}{" "}
+                  <span className="text-base-content/70">out:</span> {log.tokens_out}
                 </td>
                 <td className="font-mono text-xs">
                   {log.cost > 0 ? `$${log.cost.toFixed(4)}` : "—"}
@@ -93,10 +93,10 @@ export function AiGatewayLogs({ gatewayId }: { gatewayId: string }) {
                   {log.cached ? (
                     <Zap className="size-3.5 text-warning" />
                   ) : (
-                    <span className="text-base-content/30">—</span>
+                    <span className="text-base-content/60">—</span>
                   )}
                 </td>
-                <td className="text-xs text-base-content/50">
+                <td className="text-xs text-base-content/70">
                   {new Date(log.created_at).toLocaleString()}
                 </td>
               </tr>

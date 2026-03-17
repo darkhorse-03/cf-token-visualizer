@@ -20,6 +20,9 @@ import { SimpleIcon, type SimpleIconName } from "#/components/SimpleIcon";
 export function DashboardSidebar() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const isForestByDefault =
+    typeof document !== "undefined" &&
+    document.documentElement.getAttribute("data-theme") === "forest";
 
   const { data } = useQuery({
     queryKey: ["tokens"],
@@ -49,10 +52,16 @@ export function DashboardSidebar() {
     navigate({ to: "/" });
   };
 
+  const handleThemeChange = (checked: boolean) => {
+    const theme = checked ? "forest" : "emerald";
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  };
+
   return (
     <div className="flex flex-col h-full bg-base-200">
       <div className="p-4 flex items-center gap-2">
-        <SimpleIcon name="cloudflare" className="size-5 text-primary" />
+        <SimpleIcon name="cloudflare" className="size-5" />
         <span className="font-semibold tracking-tight">CF Visualizer</span>
       </div>
 
@@ -130,7 +139,7 @@ export function DashboardSidebar() {
 
       <div className="border-t border-base-300 px-3 py-2 flex items-center justify-between">
         <button
-          className="btn btn-ghost btn-sm gap-2 text-error/60 hover:text-error"
+          className="btn btn-ghost btn-sm gap-2 btn-error"
           onClick={handleLogout}
         >
           <LogOut className="size-4" />
@@ -141,7 +150,11 @@ export function DashboardSidebar() {
           <input
             type="checkbox"
             className="theme-controller"
-            value="night"
+            value="forest"
+            defaultChecked={isForestByDefault}
+            autoComplete="off"
+            onChange={(e) => handleThemeChange(e.target.checked)}
+            aria-label="Toggle theme"
           />
           <Sun className="swap-off size-4" />
           <Moon className="swap-on size-4" />

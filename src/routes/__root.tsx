@@ -24,6 +24,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var root=document.documentElement;var themes=['emerald','forest'];var stored=localStorage.getItem('theme');if(stored&&themes.indexOf(stored)!==-1){root.setAttribute('data-theme',stored);return;}var prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;root.setAttribute('data-theme',prefersDark?'forest':'emerald');}catch(e){}})();",
+          }}
+        />
       </head>
       <body>
         {children}
