@@ -4,12 +4,12 @@ import { listDnsRecords } from "#/lib/cf-api";
 import { DnsTable } from "#/components/DnsTable";
 import type { Zone } from "#/types/cloudflare";
 
-export function ZoneCard({ zone, token }: { zone: Zone; token: string }) {
+export function ZoneCard({ zone }: { zone: Zone }) {
   const [expanded, setExpanded] = useState(false);
 
   const { data: records, isLoading } = useQuery({
     queryKey: ["dns-records", zone.id],
-    queryFn: () => listDnsRecords({ data: { token, zoneId: zone.id } }),
+    queryFn: () => listDnsRecords({ data: zone.id }),
     enabled: expanded,
   });
 

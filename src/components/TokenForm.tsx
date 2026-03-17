@@ -2,18 +2,20 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { KeyRound, ExternalLink } from "lucide-react";
-import { setToken } from "#/lib/token";
+import { addToken } from "#/lib/token";
 import { verifyToken } from "#/lib/cf-api";
 
 export function TokenForm() {
   const [token, setTokenValue] = useState("");
-  const [remember, setRemember] = useState(true);
+  const [label, setLabel] = useState("");
   const navigate = useNavigate();
 
   const verify = useMutation({
-    mutationFn: (t: string) => verifyToken({ data: t }),
-    onSuccess: (_data, t) => {
-      setToken(t, remember);
+    mutationFn: async (t: string) => {
+      await verifyToken({ data: t });
+      await addToken({ data: { label: label.trim() || "Default", token: t } });
+    },
+    onSuccess: () => {
       navigate({ to: "/dashboard" });
     },
   });
@@ -26,7 +28,7 @@ export function TokenForm() {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="card bg-base-100 shadow-xl w-full max-w-md animate-fade-up">
         <div className="card-body gap-4">
           <div>
@@ -35,11 +37,22 @@ export function TokenForm() {
               Connect
             </h2>
             <p className="text-base-content/50 text-sm mt-1">
-              Paste your Cloudflare API token to visualize your account.
+              Add a Cloudflare API token to visualize your account.
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <fieldset className="fieldset">
+              <legend className="fieldset-legend">Label</legend>
+              <input
+                type="text"
+                placeholder="e.g. Production, Staging"
+                className="input input-bordered w-full"
+                value={label}
+                onChange={(e) => setLabel(e.target.value)}
+              />
+            </fieldset>
+
             <fieldset className="fieldset">
               <legend className="fieldset-legend">API Token</legend>
               <input
@@ -51,23 +64,6 @@ export function TokenForm() {
                 autoFocus
               />
             </fieldset>
-
-            <label className="fieldset flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                className="toggle toggle-primary toggle-sm"
-                checked={remember}
-                onChange={(e) => setRemember(e.target.checked)}
-              />
-              <div>
-                <span className="text-sm font-medium">Remember me</span>
-                <p className="text-xs text-base-content/40">
-                  {remember
-                    ? "Persists across sessions"
-                    : "Cleared when tab closes"}
-                </p>
-              </div>
-            </label>
 
             {verify.isError && (
               <div className="alert alert-error alert-soft">

@@ -1,21 +1,19 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
-import { getToken } from "#/lib/token";
+import { getTokens } from "#/lib/token";
 import { DashboardSidebar } from "#/components/DashboardNav";
 
 export const Route = createFileRoute("/dashboard")({
+  beforeLoad: async () => {
+    const { tokens } = await getTokens();
+    if (tokens.length === 0) {
+      throw redirect({ to: "/" });
+    }
+  },
   component: DashboardLayout,
 });
 
 function DashboardLayout() {
-  const navigate = useNavigate();
-  const token = getToken();
-
-  if (!token) {
-    navigate({ to: "/" });
-    return null;
-  }
-
   return (
     <div className="drawer lg:drawer-open">
       <input id="dashboard-drawer" type="checkbox" className="drawer-toggle" />
@@ -32,9 +30,9 @@ function DashboardLayout() {
       </div>
       <div className="drawer-side z-40">
         <label htmlFor="dashboard-drawer" aria-label="close sidebar" className="drawer-overlay" />
-        <div className="w-64 min-h-full">
+        <aside className="w-64 h-screen sticky top-0">
           <DashboardSidebar />
-        </div>
+        </aside>
       </div>
     </div>
   );

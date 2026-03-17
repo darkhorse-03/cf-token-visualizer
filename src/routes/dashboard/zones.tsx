@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getToken } from "#/lib/token";
 import { listZones } from "#/lib/cf-api";
 import { ZoneCard } from "#/components/ZoneCard";
 
@@ -9,12 +8,9 @@ export const Route = createFileRoute("/dashboard/zones")({
 });
 
 function ZonesPage() {
-  const token = getToken();
-
   const { data: zones, isLoading, error } = useQuery({
     queryKey: ["zones"],
-    queryFn: () => listZones({ data: token! }),
-    enabled: !!token,
+    queryFn: () => listZones(),
   });
 
   if (isLoading) {
@@ -43,7 +39,7 @@ function ZonesPage() {
       </div>
       <div className="space-y-3">
         {zones?.map((zone) => (
-          <ZoneCard key={zone.id} zone={zone} token={token!} />
+          <ZoneCard key={zone.id} zone={zone} />
         ))}
       </div>
     </div>

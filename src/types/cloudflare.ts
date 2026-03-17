@@ -107,3 +107,53 @@ export interface AccountsResponse {
   result: AccountInfo[];
   success: boolean;
 }
+
+export interface AiGateway {
+  id: string;
+  cache_invalidate_on_update: boolean;
+  cache_ttl: number;
+  collect_logs: boolean;
+  created_at: string;
+  modified_at: string;
+  rate_limiting_interval: number;
+  rate_limiting_limit: number;
+  rate_limiting_technique: string;
+  authentication: boolean;
+  log_management: number;
+  log_management_strategy: string;
+  logpush: boolean;
+}
+
+export interface AiGatewayResponse {
+  result: AiGateway[];
+  success: boolean;
+}
+
+export interface AiGatewayLog {
+  id: string;
+  cached: boolean;
+  created_at: string;
+  duration: number;
+  model: string;
+  path: string;
+  provider: string;
+  success: boolean;
+  tokens_in: number;
+  tokens_out: number;
+  cost: number;
+  status_code: number;
+}
+
+export interface AiGatewayLogsResponse {
+  result: AiGatewayLog[];
+  result_info: PaginationInfo & {
+    max_cost: number;
+    min_cost: number;
+    max_duration: number;
+    min_duration: number;
+    max_tokens_in: number;
+    max_tokens_out: number;
+    max_total_tokens: number;
+  };
+  success: boolean;
+}

@@ -1,17 +1,17 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { getToken } from "#/lib/token";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { getTokens } from "#/lib/token";
 import { TokenForm } from "#/components/TokenForm";
 
-export const Route = createFileRoute("/")({ component: TokenPage });
+export const Route = createFileRoute("/")({
+  beforeLoad: async () => {
+    const { tokens } = await getTokens();
+    if (tokens.length > 0) {
+      throw redirect({ to: "/dashboard" });
+    }
+  },
+  component: TokenPage,
+});
 
 function TokenPage() {
-  const navigate = useNavigate();
-  const existingToken = getToken();
-
-  if (existingToken) {
-    navigate({ to: "/dashboard" });
-    return null;
-  }
-
   return <TokenForm />;
 }

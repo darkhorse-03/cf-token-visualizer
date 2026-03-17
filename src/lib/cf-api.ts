@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getActiveToken } from "#/lib/token";
 import type {
-  TokenVerifyResult,
   Zone,
   ZonesResponse,
   DnsRecord,
@@ -11,6 +11,8 @@ import type {
   KvResponse,
   AccountOverview,
   AccountsResponse,
+  AiGatewayResponse,
+  AiGatewayLogsResponse,
 } from "#/types/cloudflare";
 
 const CF_API = "https://api.cloudflare.com/client/v4";
@@ -32,15 +34,34 @@ async function cfFetch<T>(path: string, token: string): Promise<T> {
   return json as T;
 }
 
+function requireToken(request: Request): string {
+  const token = getActiveToken(request);
+  if (!token) throw new Error("Not authenticated");
+  return token;
+}
+
+async function getAccountId(token: string): Promise<string> {
+  const accounts = await cfFetch<AccountsResponse>("/accounts?per_page=1", token);
+  const accountId = accounts.result[0]?.id;
+  if (!accountId) throw new Error("No account found for this token");
+  return accountId;
+}
+
 export const verifyToken = createServerFn({ method: "POST" })
   .inputValidator((token: string) => token)
   .handler(async ({ data: token }) => {
-    return cfFetch<TokenVerifyResult>("/user/tokens/verify", token);
+    // Use /accounts instead of /user/tokens/verify since account-scoped
+    // tokens don't have access to user-level endpoints
+    const res = await cfFetch<AccountsResponse>("/accounts?per_page=1", token);
+    if (res.result.length === 0) {
+      throw new Error("Token is valid but has no account access");
+    }
+    return res;
   });
 
-export const listZones = createServerFn({ method: "POST" })
-  .inputValidator((token: string) => token)
-  .handler(async ({ data: token }) => {
+export const listZones = createServerFn({ method: "GET" }).handler(
+  async ({ request }) => {
+    const token = requireToken(request);
     const zones: Zone[] = [];
     let page = 1;
     while (true) {
@@ -53,11 +74,13 @@ export const listZones = createServerFn({ method: "POST" })
       page++;
     }
     return zones;
-  });
+  },
+);
 
 export const listDnsRecords = createServerFn({ method: "POST" })
-  .inputValidator((data: { token: string; zoneId: string }) => data)
-  .handler(async ({ data: { token, zoneId } }) => {
+  .inputValidator((zoneId: string) => zoneId)
+  .handler(async ({ request, data: zoneId }) => {
+    const token = requireToken(request);
     const records: DnsRecord[] = [];
     let page = 1;
     while (true) {
@@ -72,12 +95,10 @@ export const listDnsRecords = createServerFn({ method: "POST" })
     return records;
   });
 
-export const getAccountOverview = createServerFn({ method: "POST" })
-  .inputValidator((token: string) => token)
-  .handler(async ({ data: token }) => {
-    const accounts = await cfFetch<AccountsResponse>("/accounts?per_page=1", token);
-    const accountId = accounts.result[0]?.id;
-    if (!accountId) throw new Error("No account found for this token");
+export const getAccountOverview = createServerFn({ method: "GET" }).handler(
+  async ({ request }) => {
+    const token = requireToken(request);
+    const accountId = await getAccountId(token);
 
     const [zones, workers, pages, r2, kv] = await Promise.allSettled([
       cfFetch<ZonesResponse>("/zones?per_page=1", token),
@@ -94,4 +115,29 @@ export const getAccountOverview = createServerFn({ method: "POST" })
       r2Buckets: r2.status === "fulfilled" ? r2.value.result.buckets.length : 0,
       kvNamespaces: kv.status === "fulfilled" ? kv.value.result.length : 0,
     } satisfies AccountOverview;
+  },
+);
+
+export const listAiGateways = createServerFn({ method: "GET" }).handler(
+  async ({ request }) => {
+    const token = requireToken(request);
+    const accountId = await getAccountId(token);
+    const res = await cfFetch<AiGatewayResponse>(
+      `/accounts/${accountId}/ai-gateway/gateways?per_page=100`,
+      token,
+    );
+    return res.result;
+  },
+);
+
+export const listAiGatewayLogs = createServerFn({ method: "POST" })
+  .inputValidator((gatewayId: string) => gatewayId)
+  .handler(async ({ request, data: gatewayId }) => {
+    const token = requireToken(request);
+    const accountId = await getAccountId(token);
+    const res = await cfFetch<AiGatewayLogsResponse>(
+      `/accounts/${accountId}/ai-gateway/gateways/${encodeURIComponent(gatewayId)}/logs?per_page=50&order_by=created_at&order_by_direction=desc`,
+      token,
+    );
+    return res;
   });

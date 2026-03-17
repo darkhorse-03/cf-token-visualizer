@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Globe, Zap, FileText, Database, Archive } from "lucide-react";
-import { getToken } from "#/lib/token";
 import { getAccountOverview } from "#/lib/cf-api";
 import { StatCard } from "#/components/StatCard";
 
@@ -10,12 +9,9 @@ export const Route = createFileRoute("/dashboard/")({
 });
 
 function OverviewPage() {
-  const token = getToken();
-
   const { data, isLoading, error } = useQuery({
     queryKey: ["account-overview"],
-    queryFn: () => getAccountOverview({ data: token! }),
-    enabled: !!token,
+    queryFn: () => getAccountOverview(),
   });
 
   if (isLoading) {
