@@ -1,0 +1,2 @@
+- [project_overview.md](./project_overview.md) - CF Token Visualizer project context and goals
+- [user_preferences.md](./user_preferences.md) - User coding preferences and style
