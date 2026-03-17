@@ -15,8 +15,22 @@ function ZonesPage() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-12">
-        <span className="loading loading-spinner loading-lg" />
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="skeleton h-8 w-24" />
+          <div className="skeleton h-6 w-16 rounded-full" />
+        </div>
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="card bg-base-100 shadow p-5 space-y-2">
+              <div className="flex items-center gap-3">
+                <div className="skeleton h-5 w-40" />
+                <div className="skeleton h-5 w-14 rounded-full" />
+                <div className="skeleton h-5 w-12 rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

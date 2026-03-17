@@ -21,7 +21,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="night">
+    <html lang="en">
       <head>
         <HeadContent />
       </head>

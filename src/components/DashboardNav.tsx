@@ -3,20 +3,19 @@ import { AddTokenModal } from "#/components/AddTokenModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BarChart3,
-  Globe,
-  Zap,
-  FileText,
   Archive,
   Database,
   BrainCircuit,
   LogOut,
-  Scan,
   Plus,
   X,
   KeyRound,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { getTokens, switchToken, removeToken, clearTokens } from "#/lib/token";
 import type { LucideIcon } from "lucide-react";
+import { SimpleIcon, type SimpleIconName } from "#/components/SimpleIcon";
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
@@ -53,7 +52,7 @@ export function DashboardSidebar() {
   return (
     <div className="flex flex-col h-full bg-base-200">
       <div className="p-4 flex items-center gap-2">
-        <Scan className="size-5 text-primary" />
+        <SimpleIcon name="cloudflare" className="size-5 text-primary" />
         <span className="font-semibold tracking-tight">CF Visualizer</span>
       </div>
 
@@ -61,21 +60,29 @@ export function DashboardSidebar() {
         <li className="menu-title">Dashboard</li>
         {([
           { to: "/dashboard", label: "Overview", icon: BarChart3 },
-          { to: "/dashboard/zones", label: "Zones", icon: Globe },
-          { to: "/dashboard/workers", label: "Workers", icon: Zap },
-          { to: "/dashboard/pages", label: "Pages", icon: FileText },
+          { to: "/dashboard/zones", label: "Zones", simpleIcon: "cloudflare" },
+          { to: "/dashboard/workers", label: "Workers", simpleIcon: "workers" },
+          { to: "/dashboard/pages", label: "Pages", simpleIcon: "pages" },
           { to: "/dashboard/r2", label: "R2 Buckets", icon: Archive },
           { to: "/dashboard/kv", label: "KV Namespaces", icon: Database },
           { to: "/dashboard/ai-gateway", label: "AI Gateway", icon: BrainCircuit },
-        ] as { to: string; label: string; icon: LucideIcon }[]).map(
-          ({ to, label, icon: Icon }) => (
+        ] as {
+          to: string;
+          label: string;
+          icon?: LucideIcon;
+          simpleIcon?: SimpleIconName;
+        }[]).map(({ to, label, icon: Icon, simpleIcon }) => (
             <li key={to}>
               <Link
                 to={to}
                 activeOptions={{ exact: true }}
                 activeProps={{ className: "menu-active" }}
               >
-                <Icon className="size-4" />
+                {simpleIcon ? (
+                  <SimpleIcon name={simpleIcon} className="size-4" />
+                ) : (
+                  Icon && <Icon className="size-4" />
+                )}
                 {label}
               </Link>
             </li>
@@ -121,14 +128,24 @@ export function DashboardSidebar() {
         </ul>
       </div>
 
-      <div className="border-t border-base-300 px-3 py-2">
+      <div className="border-t border-base-300 px-3 py-2 flex items-center justify-between">
         <button
-          className="btn btn-ghost btn-sm w-full justify-start gap-2 text-base-content/40 hover:text-error"
+          className="btn btn-ghost btn-sm gap-2 text-error/60 hover:text-error"
           onClick={handleLogout}
         >
           <LogOut className="size-4" />
-          Disconnect all
+          Disconnect
         </button>
+
+        <label className="swap swap-rotate btn btn-ghost btn-sm btn-square">
+          <input
+            type="checkbox"
+            className="theme-controller"
+            value="night"
+          />
+          <Sun className="swap-off size-4" />
+          <Moon className="swap-on size-4" />
+        </label>
       </div>
 
       <AddTokenModal id="add-token-modal" />

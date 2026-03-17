@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 export function StatCard({
   label,
@@ -9,7 +9,7 @@ export function StatCard({
 }: {
   label: string;
   count: number;
-  icon: LucideIcon;
+  icon: ComponentType<{ className?: string }>;
   to?: string;
 }) {
   const card = (

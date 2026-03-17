@@ -10,8 +10,18 @@ export function AiGatewayLogs({ gatewayId }: { gatewayId: string }) {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-8">
-        <span className="loading loading-spinner text-primary" />
+      <div className="space-y-3">
+        <div className="skeleton h-6 w-40 rounded-full" />
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex gap-4 items-center">
+            <div className="skeleton h-4 w-4 rounded-full" />
+            <div className="skeleton h-4 w-16" />
+            <div className="skeleton h-4 w-28" />
+            <div className="skeleton h-4 w-20" />
+            <div className="skeleton h-4 w-14" />
+            <div className="skeleton h-4 w-12" />
+          </div>
+        ))}
       </div>
     );
   }
