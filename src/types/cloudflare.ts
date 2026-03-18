@@ -134,9 +134,9 @@ export interface KvResponse {
 export interface AccountOverview {
   zones: number;
   workers: number;
-  pages: number;
   r2Buckets: number;
   kvNamespaces: number;
+  aiGateways: number;
 }
 
 export interface AccountInfo {
@@ -189,6 +189,7 @@ export interface AiGateway {
 
 export interface AiGatewayResponse {
   result: AiGateway[];
+  result_info?: PaginationInfo;
   success: boolean;
 }
 

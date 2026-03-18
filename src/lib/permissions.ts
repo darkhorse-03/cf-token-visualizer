@@ -15,6 +15,7 @@ export const PERMISSION_MAP: Record<string, string> = {
   "/ai-gateway": "AI Gateway:Read",
   "/accounts": "Account Settings:Read",
   "/d1/database": "D1:Read",
+  "/workers/observability": "Workers Observability:Write",
 };
 
 export function getRequiredPermission(path: string): string | null {

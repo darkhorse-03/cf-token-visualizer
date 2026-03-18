@@ -15,7 +15,6 @@ import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardZonesRouteImport } from './routes/dashboard/zones'
 import { Route as DashboardWorkersRouteImport } from './routes/dashboard/workers'
 import { Route as DashboardR2RouteImport } from './routes/dashboard/r2'
-import { Route as DashboardPagesRouteImport } from './routes/dashboard/pages'
 import { Route as DashboardKvRouteImport } from './routes/dashboard/kv'
 import { Route as DashboardAiGatewayRouteImport } from './routes/dashboard/ai-gateway'
 import { Route as DashboardWorkersIndexRouteImport } from './routes/dashboard/workers/index'
@@ -51,11 +50,6 @@ const DashboardR2Route = DashboardR2RouteImport.update({
   path: '/r2',
   getParentRoute: () => DashboardRoute,
 } as any)
-const DashboardPagesRoute = DashboardPagesRouteImport.update({
-  id: '/pages',
-  path: '/pages',
-  getParentRoute: () => DashboardRoute,
-} as any)
 const DashboardKvRoute = DashboardKvRouteImport.update({
   id: '/kv',
   path: '/kv',
@@ -82,7 +76,6 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
   '/dashboard/kv': typeof DashboardKvRoute
-  '/dashboard/pages': typeof DashboardPagesRoute
   '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/workers': typeof DashboardWorkersRouteWithChildren
   '/dashboard/zones': typeof DashboardZonesRoute
@@ -94,7 +87,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
   '/dashboard/kv': typeof DashboardKvRoute
-  '/dashboard/pages': typeof DashboardPagesRoute
   '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard': typeof DashboardIndexRoute
@@ -107,7 +99,6 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
   '/dashboard/kv': typeof DashboardKvRoute
-  '/dashboard/pages': typeof DashboardPagesRoute
   '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/workers': typeof DashboardWorkersRouteWithChildren
   '/dashboard/zones': typeof DashboardZonesRoute
@@ -122,7 +113,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/ai-gateway'
     | '/dashboard/kv'
-    | '/dashboard/pages'
     | '/dashboard/r2'
     | '/dashboard/workers'
     | '/dashboard/zones'
@@ -134,7 +124,6 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard/ai-gateway'
     | '/dashboard/kv'
-    | '/dashboard/pages'
     | '/dashboard/r2'
     | '/dashboard/zones'
     | '/dashboard'
@@ -146,7 +135,6 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/ai-gateway'
     | '/dashboard/kv'
-    | '/dashboard/pages'
     | '/dashboard/r2'
     | '/dashboard/workers'
     | '/dashboard/zones'
@@ -204,13 +192,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardR2RouteImport
       parentRoute: typeof DashboardRoute
     }
-    '/dashboard/pages': {
-      id: '/dashboard/pages'
-      path: '/pages'
-      fullPath: '/dashboard/pages'
-      preLoaderRoute: typeof DashboardPagesRouteImport
-      parentRoute: typeof DashboardRoute
-    }
     '/dashboard/kv': {
       id: '/dashboard/kv'
       path: '/kv'
@@ -258,7 +239,6 @@ const DashboardWorkersRouteWithChildren =
 interface DashboardRouteChildren {
   DashboardAiGatewayRoute: typeof DashboardAiGatewayRoute
   DashboardKvRoute: typeof DashboardKvRoute
-  DashboardPagesRoute: typeof DashboardPagesRoute
   DashboardR2Route: typeof DashboardR2Route
   DashboardWorkersRoute: typeof DashboardWorkersRouteWithChildren
   DashboardZonesRoute: typeof DashboardZonesRoute
@@ -268,7 +248,6 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAiGatewayRoute: DashboardAiGatewayRoute,
   DashboardKvRoute: DashboardKvRoute,
-  DashboardPagesRoute: DashboardPagesRoute,
   DashboardR2Route: DashboardR2Route,
   DashboardWorkersRoute: DashboardWorkersRouteWithChildren,
   DashboardZonesRoute: DashboardZonesRoute,

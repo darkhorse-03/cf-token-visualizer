@@ -9,7 +9,6 @@ import type {
   WorkersResponse,
   WorkerSettingsResponse,
   WorkerAnalytics,
-  PagesResponse,
   R2Response,
   KvResponse,
   AccountOverview,
@@ -111,20 +110,20 @@ export const getAccountOverview = createServerFn({ method: "GET" }).handler(
     const token = requireToken(request);
     const accountId = await getAccountId(token);
 
-    const [zones, workers, pages, r2, kv] = await Promise.allSettled([
+    const [zones, workers, r2, kv, aiGateways] = await Promise.allSettled([
       cfFetch<ZonesResponse>("/zones?per_page=1", token),
       cfFetch<WorkersResponse>(`/accounts/${accountId}/workers/scripts`, token),
-      cfFetch<PagesResponse>(`/accounts/${accountId}/pages/projects`, token),
       cfFetch<R2Response>(`/accounts/${accountId}/r2/buckets`, token),
       cfFetch<KvResponse>(`/accounts/${accountId}/storage/kv/namespaces`, token),
+      cfFetch<AiGatewayResponse>(`/accounts/${accountId}/ai-gateway/gateways?per_page=1`, token),
     ]);
 
     return {
       zones: zones.status === "fulfilled" ? zones.value.result_info?.total_count ?? zones.value.result.length : 0,
       workers: workers.status === "fulfilled" ? workers.value.result.length : 0,
-      pages: pages.status === "fulfilled" ? pages.value.result.length : 0,
       r2Buckets: r2.status === "fulfilled" ? r2.value.result.buckets.length : 0,
       kvNamespaces: kv.status === "fulfilled" ? kv.value.result.length : 0,
+      aiGateways: aiGateways.status === "fulfilled" ? aiGateways.value.result_info?.total_count ?? aiGateways.value.result.length : 0,
     } satisfies AccountOverview;
   },
 );

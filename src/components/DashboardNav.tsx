@@ -71,8 +71,7 @@ export function DashboardSidebar() {
         {([
           { to: "/dashboard", label: "Overview", icon: BarChart3 },
           { to: "/dashboard/zones", label: "Zones", simpleIcon: "cloudflare" },
-          { to: "/dashboard/workers", label: "Workers", simpleIcon: "workers" },
-          { to: "/dashboard/pages", label: "Pages", simpleIcon: "pages" },
+          { to: "/dashboard/workers", label: "Workers & Pages", simpleIcon: "workers" },
           { to: "/dashboard/r2", label: "R2 Buckets", cfIcon: "r2" },
           { to: "/dashboard/kv", label: "KV Namespaces", cfIcon: "kv" },
           { to: "/dashboard/ai-gateway", label: "AI Gateway", cfIcon: "aiGateway" },

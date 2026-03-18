@@ -56,16 +56,10 @@ function OverviewPage() {
           to="/dashboard/zones"
         />
         <StatCard
-          label="Workers"
+          label="Workers & Pages"
           count={data.workers}
           icon={(props) => <SimpleIcon name="workers" {...props} />}
           to="/dashboard/workers"
-        />
-        <StatCard
-          label="Pages"
-          count={data.pages}
-          icon={(props) => <SimpleIcon name="pages" {...props} />}
-          to="/dashboard/pages"
         />
         <StatCard
           label="R2 Buckets"
@@ -78,6 +72,12 @@ function OverviewPage() {
           count={data.kvNamespaces}
           icon={(props) => <CloudflareAssetIcon name="kv" {...props} />}
           to="/dashboard/kv"
+        />
+        <StatCard
+          label="AI Gateways"
+          count={data.aiGateways}
+          icon={(props) => <CloudflareAssetIcon name="aiGateway" {...props} />}
+          to="/dashboard/ai-gateway"
         />
       </div>
     </div>
