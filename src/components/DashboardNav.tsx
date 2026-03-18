@@ -3,9 +3,6 @@ import { AddTokenModal } from "#/components/AddTokenModal";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   BarChart3,
-  Archive,
-  Database,
-  BrainCircuit,
   LogOut,
   Plus,
   X,
@@ -16,6 +13,10 @@ import {
 import { getTokens, switchToken, removeToken, clearTokens } from "#/lib/token";
 import type { LucideIcon } from "lucide-react";
 import { SimpleIcon, type SimpleIconName } from "#/components/SimpleIcon";
+import {
+  CloudflareAssetIcon,
+  type CloudflareAssetIconName,
+} from "#/components/CloudflareAssetIcon";
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
@@ -72,15 +73,16 @@ export function DashboardSidebar() {
           { to: "/dashboard/zones", label: "Zones", simpleIcon: "cloudflare" },
           { to: "/dashboard/workers", label: "Workers", simpleIcon: "workers" },
           { to: "/dashboard/pages", label: "Pages", simpleIcon: "pages" },
-          { to: "/dashboard/r2", label: "R2 Buckets", icon: Archive },
-          { to: "/dashboard/kv", label: "KV Namespaces", icon: Database },
-          { to: "/dashboard/ai-gateway", label: "AI Gateway", icon: BrainCircuit },
+          { to: "/dashboard/r2", label: "R2 Buckets", cfIcon: "r2" },
+          { to: "/dashboard/kv", label: "KV Namespaces", cfIcon: "kv" },
+          { to: "/dashboard/ai-gateway", label: "AI Gateway", cfIcon: "aiGateway" },
         ] as {
           to: string;
           label: string;
           icon?: LucideIcon;
           simpleIcon?: SimpleIconName;
-        }[]).map(({ to, label, icon: Icon, simpleIcon }) => (
+          cfIcon?: CloudflareAssetIconName;
+        }[]).map(({ to, label, icon: Icon, simpleIcon, cfIcon }) => (
             <li key={to}>
               <Link
                 to={to}
@@ -89,8 +91,10 @@ export function DashboardSidebar() {
               >
                 {simpleIcon ? (
                   <SimpleIcon name={simpleIcon} className="size-4" />
+                ) : cfIcon ? (
+                  <CloudflareAssetIcon name={cfIcon} className="size-[18px]" />
                 ) : (
-                  Icon && <Icon className="size-4" />
+                  Icon && <Icon className="size-4" style={{ color: "#F6821F" }} />
                 )}
                 {label}
               </Link>

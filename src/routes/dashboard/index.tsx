@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Database, Archive } from "lucide-react";
 import { getAccountOverview } from "#/lib/cf-api";
 import { StatCard } from "#/components/StatCard";
 import { SimpleIcon } from "#/components/SimpleIcon";
+import { CloudflareAssetIcon } from "#/components/CloudflareAssetIcon";
 
 export const Route = createFileRoute("/dashboard/")({
   component: OverviewPage,
@@ -67,8 +67,18 @@ function OverviewPage() {
           icon={(props) => <SimpleIcon name="pages" {...props} />}
           to="/dashboard/pages"
         />
-        <StatCard label="R2 Buckets" count={data.r2Buckets} icon={Archive} to="/dashboard/r2" />
-        <StatCard label="KV Namespaces" count={data.kvNamespaces} icon={Database} to="/dashboard/kv" />
+        <StatCard
+          label="R2 Buckets"
+          count={data.r2Buckets}
+          icon={(props) => <CloudflareAssetIcon name="r2" {...props} />}
+          to="/dashboard/r2"
+        />
+        <StatCard
+          label="KV Namespaces"
+          count={data.kvNamespaces}
+          icon={(props) => <CloudflareAssetIcon name="kv" {...props} />}
+          to="/dashboard/kv"
+        />
       </div>
     </div>
   );
