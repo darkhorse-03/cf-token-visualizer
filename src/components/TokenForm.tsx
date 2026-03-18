@@ -33,7 +33,7 @@ export function TokenForm() {
         <div className="card-body gap-4">
           <div>
             <h2 className="card-title text-2xl font-bold gap-2">
-              <KeyRound className="size-6 text-primary" />
+              <KeyRound className="size-6" style={{ color: "#F6821F" }} />
               Connect
             </h2>
             <p className="text-base-content/50 text-sm mt-1">
@@ -73,7 +73,8 @@ export function TokenForm() {
 
             <button
               type="submit"
-              className="btn btn-primary w-full"
+              className="btn w-full text-white border-none"
+              style={{ backgroundColor: "#F6821F" }}
               disabled={!token.trim() || verify.isPending}
             >
               {verify.isPending && (
@@ -91,7 +92,8 @@ export function TokenForm() {
               href="https://dash.cloudflare.com/profile/api-tokens"
               target="_blank"
               rel="noopener noreferrer"
-              className="link link-primary"
+              className="link"
+              style={{ color: "#F6821F" }}
             >
               Cloudflare Dashboard <ExternalLink className="size-3 inline" />
             </a>

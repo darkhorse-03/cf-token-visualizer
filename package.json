@@ -6,12 +6,16 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "alchemy dev",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "deploy": "alchemy deploy",
+    "destroy": "alchemy destroy"
   },
   "dependencies": {
+    "@cloudflare/vite-plugin": "^1.29.1",
+    "@cloudflare/workers-types": "^4.20260317.1",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "^5.91.0",
@@ -20,6 +24,7 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "^1.166.14",
+    "alchemy": "^0.89.0",
     "daisyui": "^5.5.19",
     "lucide-react": "^0.545.0",
     "react": "^19.2.4",
