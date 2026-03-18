@@ -18,6 +18,8 @@ import { Route as DashboardR2RouteImport } from './routes/dashboard/r2'
 import { Route as DashboardPagesRouteImport } from './routes/dashboard/pages'
 import { Route as DashboardKvRouteImport } from './routes/dashboard/kv'
 import { Route as DashboardAiGatewayRouteImport } from './routes/dashboard/ai-gateway'
+import { Route as DashboardWorkersIndexRouteImport } from './routes/dashboard/workers/index'
+import { Route as DashboardWorkersIdRouteImport } from './routes/dashboard/workers/$id'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -64,6 +66,16 @@ const DashboardAiGatewayRoute = DashboardAiGatewayRouteImport.update({
   path: '/ai-gateway',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardWorkersIndexRoute = DashboardWorkersIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardWorkersRoute,
+} as any)
+const DashboardWorkersIdRoute = DashboardWorkersIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DashboardWorkersRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,9 +84,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/kv': typeof DashboardKvRoute
   '/dashboard/pages': typeof DashboardPagesRoute
   '/dashboard/r2': typeof DashboardR2Route
-  '/dashboard/workers': typeof DashboardWorkersRoute
+  '/dashboard/workers': typeof DashboardWorkersRouteWithChildren
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/workers/$id': typeof DashboardWorkersIdRoute
+  '/dashboard/workers/': typeof DashboardWorkersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -82,9 +96,10 @@ export interface FileRoutesByTo {
   '/dashboard/kv': typeof DashboardKvRoute
   '/dashboard/pages': typeof DashboardPagesRoute
   '/dashboard/r2': typeof DashboardR2Route
-  '/dashboard/workers': typeof DashboardWorkersRoute
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/dashboard/workers/$id': typeof DashboardWorkersIdRoute
+  '/dashboard/workers': typeof DashboardWorkersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -94,9 +109,11 @@ export interface FileRoutesById {
   '/dashboard/kv': typeof DashboardKvRoute
   '/dashboard/pages': typeof DashboardPagesRoute
   '/dashboard/r2': typeof DashboardR2Route
-  '/dashboard/workers': typeof DashboardWorkersRoute
+  '/dashboard/workers': typeof DashboardWorkersRouteWithChildren
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/dashboard/workers/$id': typeof DashboardWorkersIdRoute
+  '/dashboard/workers/': typeof DashboardWorkersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -110,6 +127,8 @@ export interface FileRouteTypes {
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard/'
+    | '/dashboard/workers/$id'
+    | '/dashboard/workers/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -117,9 +136,10 @@ export interface FileRouteTypes {
     | '/dashboard/kv'
     | '/dashboard/pages'
     | '/dashboard/r2'
-    | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard'
+    | '/dashboard/workers/$id'
+    | '/dashboard/workers'
   id:
     | '__root__'
     | '/'
@@ -131,6 +151,8 @@ export interface FileRouteTypes {
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard/'
+    | '/dashboard/workers/$id'
+    | '/dashboard/workers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -203,15 +225,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardAiGatewayRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/workers/': {
+      id: '/dashboard/workers/'
+      path: '/'
+      fullPath: '/dashboard/workers/'
+      preLoaderRoute: typeof DashboardWorkersIndexRouteImport
+      parentRoute: typeof DashboardWorkersRoute
+    }
+    '/dashboard/workers/$id': {
+      id: '/dashboard/workers/$id'
+      path: '/$id'
+      fullPath: '/dashboard/workers/$id'
+      preLoaderRoute: typeof DashboardWorkersIdRouteImport
+      parentRoute: typeof DashboardWorkersRoute
+    }
   }
 }
+
+interface DashboardWorkersRouteChildren {
+  DashboardWorkersIdRoute: typeof DashboardWorkersIdRoute
+  DashboardWorkersIndexRoute: typeof DashboardWorkersIndexRoute
+}
+
+const DashboardWorkersRouteChildren: DashboardWorkersRouteChildren = {
+  DashboardWorkersIdRoute: DashboardWorkersIdRoute,
+  DashboardWorkersIndexRoute: DashboardWorkersIndexRoute,
+}
+
+const DashboardWorkersRouteWithChildren =
+  DashboardWorkersRoute._addFileChildren(DashboardWorkersRouteChildren)
 
 interface DashboardRouteChildren {
   DashboardAiGatewayRoute: typeof DashboardAiGatewayRoute
   DashboardKvRoute: typeof DashboardKvRoute
   DashboardPagesRoute: typeof DashboardPagesRoute
   DashboardR2Route: typeof DashboardR2Route
-  DashboardWorkersRoute: typeof DashboardWorkersRoute
+  DashboardWorkersRoute: typeof DashboardWorkersRouteWithChildren
   DashboardZonesRoute: typeof DashboardZonesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
 }
@@ -221,7 +270,7 @@ const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardKvRoute: DashboardKvRoute,
   DashboardPagesRoute: DashboardPagesRoute,
   DashboardR2Route: DashboardR2Route,
-  DashboardWorkersRoute: DashboardWorkersRoute,
+  DashboardWorkersRoute: DashboardWorkersRouteWithChildren,
   DashboardZonesRoute: DashboardZonesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
 }

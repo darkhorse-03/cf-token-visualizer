@@ -86,7 +86,7 @@ export function DashboardSidebar() {
             <li key={to}>
               <Link
                 to={to}
-                activeOptions={{ exact: true }}
+                activeOptions={{ exact: to === "/dashboard" }}
                 activeProps={{ className: "menu-active" }}
               >
                 {simpleIcon ? (
@@ -112,7 +112,7 @@ export function DashboardSidebar() {
                 className={i === activeIdx ? "menu-active" : ""}
                 onClick={() => handleSwitch(i)}
               >
-                <KeyRound className="size-3.5" />
+                <KeyRound className="size-3.5" style={{ color: "#F6821F" }} />
                 <span className="flex-1 truncate">{t.label}</span>
                 {tokens.length > 1 && (
                   <span

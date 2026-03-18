@@ -46,9 +46,50 @@ export interface PaginationInfo {
 
 export interface Worker {
   id: string;
-  name: string;
-  modified_on: string;
   created_on: string;
+  modified_on: string;
+  handlers: string[];
+  last_deployed_from?: string;
+  compatibility_date?: string;
+  compatibility_flags?: string[];
+  has_modules: boolean;
+  has_assets: boolean;
+  logpush: boolean;
+  usage_model: string;
+  observability?: {
+    enabled: boolean;
+    logs?: { enabled: boolean };
+  };
+}
+
+export interface WorkerBinding {
+  name: string;
+  type: string;
+  // D1
+  database_id?: string;
+  // KV
+  namespace_id?: string;
+  // Service
+  service?: string;
+  environment?: string;
+  // R2
+  bucket_name?: string;
+  // Plain text
+  text?: string;
+  // Queue
+  queue_name?: string;
+}
+
+export interface WorkerSettings {
+  bindings: WorkerBinding[];
+  placement?: { mode: string };
+  compatibility_date?: string;
+  compatibility_flags?: string[];
+}
+
+export interface WorkerSettingsResponse {
+  result: WorkerSettings;
+  success: boolean;
 }
 
 export interface WorkersResponse {
@@ -106,6 +147,28 @@ export interface AccountInfo {
 export interface AccountsResponse {
   result: AccountInfo[];
   success: boolean;
+}
+
+export interface WorkerLogEntry {
+  $workers: {
+    scriptName: string;
+    wallTimeMs: number;
+    outcome: string;
+    event?: {
+      request?: { method: string; url: string };
+      response?: { status: number };
+    };
+  };
+  timestamp: string;
+  logs?: Array<{ message: string; level: string }>;
+}
+
+export interface WorkerAnalytics {
+  totalRequests: number;
+  totalErrors: number;
+  totalSubrequests: number;
+  p50Latency: number;
+  p99Latency: number;
 }
 
 export interface AiGateway {
