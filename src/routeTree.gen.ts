@@ -14,11 +14,19 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as DashboardZonesRouteImport } from './routes/dashboard/zones'
 import { Route as DashboardWorkersRouteImport } from './routes/dashboard/workers'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard/settings'
 import { Route as DashboardR2RouteImport } from './routes/dashboard/r2'
+import { Route as DashboardProjectsRouteImport } from './routes/dashboard/projects'
 import { Route as DashboardKvRouteImport } from './routes/dashboard/kv'
 import { Route as DashboardAiGatewayRouteImport } from './routes/dashboard/ai-gateway'
 import { Route as DashboardWorkersIndexRouteImport } from './routes/dashboard/workers/index'
+import { Route as DashboardSettingsIndexRouteImport } from './routes/dashboard/settings/index'
+import { Route as DashboardProjectsIndexRouteImport } from './routes/dashboard/projects/index'
 import { Route as DashboardWorkersIdRouteImport } from './routes/dashboard/workers/$id'
+import { Route as DashboardSettingsPermissionsRouteImport } from './routes/dashboard/settings/permissions'
+import { Route as DashboardSettingsMembersRouteImport } from './routes/dashboard/settings/members'
+import { Route as DashboardProjectsIdRouteImport } from './routes/dashboard/projects/$id'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
@@ -45,9 +53,19 @@ const DashboardWorkersRoute = DashboardWorkersRouteImport.update({
   path: '/workers',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardR2Route = DashboardR2RouteImport.update({
   id: '/r2',
   path: '/r2',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardProjectsRoute = DashboardProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => DashboardRoute,
 } as any)
 const DashboardKvRoute = DashboardKvRouteImport.update({
@@ -65,10 +83,42 @@ const DashboardWorkersIndexRoute = DashboardWorkersIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DashboardWorkersRoute,
 } as any)
+const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardSettingsRoute,
+} as any)
+const DashboardProjectsIndexRoute = DashboardProjectsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardProjectsRoute,
+} as any)
 const DashboardWorkersIdRoute = DashboardWorkersIdRouteImport.update({
   id: '/$id',
   path: '/$id',
   getParentRoute: () => DashboardWorkersRoute,
+} as any)
+const DashboardSettingsPermissionsRoute =
+  DashboardSettingsPermissionsRouteImport.update({
+    id: '/permissions',
+    path: '/permissions',
+    getParentRoute: () => DashboardSettingsRoute,
+  } as any)
+const DashboardSettingsMembersRoute =
+  DashboardSettingsMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => DashboardSettingsRoute,
+  } as any)
+const DashboardProjectsIdRoute = DashboardProjectsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DashboardProjectsRoute,
+} as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -76,11 +126,19 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
   '/dashboard/kv': typeof DashboardKvRoute
+  '/dashboard/projects': typeof DashboardProjectsRouteWithChildren
   '/dashboard/r2': typeof DashboardR2Route
+  '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/dashboard/workers': typeof DashboardWorkersRouteWithChildren
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/projects/$id': typeof DashboardProjectsIdRoute
+  '/dashboard/settings/members': typeof DashboardSettingsMembersRoute
+  '/dashboard/settings/permissions': typeof DashboardSettingsPermissionsRoute
   '/dashboard/workers/$id': typeof DashboardWorkersIdRoute
+  '/dashboard/projects/': typeof DashboardProjectsIndexRoute
+  '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/dashboard/workers/': typeof DashboardWorkersIndexRoute
 }
 export interface FileRoutesByTo {
@@ -90,7 +148,13 @@ export interface FileRoutesByTo {
   '/dashboard/r2': typeof DashboardR2Route
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard': typeof DashboardIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/projects/$id': typeof DashboardProjectsIdRoute
+  '/dashboard/settings/members': typeof DashboardSettingsMembersRoute
+  '/dashboard/settings/permissions': typeof DashboardSettingsPermissionsRoute
   '/dashboard/workers/$id': typeof DashboardWorkersIdRoute
+  '/dashboard/projects': typeof DashboardProjectsIndexRoute
+  '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/dashboard/workers': typeof DashboardWorkersIndexRoute
 }
 export interface FileRoutesById {
@@ -99,11 +163,19 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRouteWithChildren
   '/dashboard/ai-gateway': typeof DashboardAiGatewayRoute
   '/dashboard/kv': typeof DashboardKvRoute
+  '/dashboard/projects': typeof DashboardProjectsRouteWithChildren
   '/dashboard/r2': typeof DashboardR2Route
+  '/dashboard/settings': typeof DashboardSettingsRouteWithChildren
   '/dashboard/workers': typeof DashboardWorkersRouteWithChildren
   '/dashboard/zones': typeof DashboardZonesRoute
   '/dashboard/': typeof DashboardIndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
+  '/dashboard/projects/$id': typeof DashboardProjectsIdRoute
+  '/dashboard/settings/members': typeof DashboardSettingsMembersRoute
+  '/dashboard/settings/permissions': typeof DashboardSettingsPermissionsRoute
   '/dashboard/workers/$id': typeof DashboardWorkersIdRoute
+  '/dashboard/projects/': typeof DashboardProjectsIndexRoute
+  '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/dashboard/workers/': typeof DashboardWorkersIndexRoute
 }
 export interface FileRouteTypes {
@@ -113,11 +185,19 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/ai-gateway'
     | '/dashboard/kv'
+    | '/dashboard/projects'
     | '/dashboard/r2'
+    | '/dashboard/settings'
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard/'
+    | '/api/auth/$'
+    | '/dashboard/projects/$id'
+    | '/dashboard/settings/members'
+    | '/dashboard/settings/permissions'
     | '/dashboard/workers/$id'
+    | '/dashboard/projects/'
+    | '/dashboard/settings/'
     | '/dashboard/workers/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,7 +207,13 @@ export interface FileRouteTypes {
     | '/dashboard/r2'
     | '/dashboard/zones'
     | '/dashboard'
+    | '/api/auth/$'
+    | '/dashboard/projects/$id'
+    | '/dashboard/settings/members'
+    | '/dashboard/settings/permissions'
     | '/dashboard/workers/$id'
+    | '/dashboard/projects'
+    | '/dashboard/settings'
     | '/dashboard/workers'
   id:
     | '__root__'
@@ -135,17 +221,26 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/dashboard/ai-gateway'
     | '/dashboard/kv'
+    | '/dashboard/projects'
     | '/dashboard/r2'
+    | '/dashboard/settings'
     | '/dashboard/workers'
     | '/dashboard/zones'
     | '/dashboard/'
+    | '/api/auth/$'
+    | '/dashboard/projects/$id'
+    | '/dashboard/settings/members'
+    | '/dashboard/settings/permissions'
     | '/dashboard/workers/$id'
+    | '/dashboard/projects/'
+    | '/dashboard/settings/'
     | '/dashboard/workers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRouteWithChildren
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -185,11 +280,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardWorkersRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/r2': {
       id: '/dashboard/r2'
       path: '/r2'
       fullPath: '/dashboard/r2'
       preLoaderRoute: typeof DashboardR2RouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/projects': {
+      id: '/dashboard/projects'
+      path: '/projects'
+      fullPath: '/dashboard/projects'
+      preLoaderRoute: typeof DashboardProjectsRouteImport
       parentRoute: typeof DashboardRoute
     }
     '/dashboard/kv': {
@@ -213,6 +322,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardWorkersIndexRouteImport
       parentRoute: typeof DashboardWorkersRoute
     }
+    '/dashboard/settings/': {
+      id: '/dashboard/settings/'
+      path: '/'
+      fullPath: '/dashboard/settings/'
+      preLoaderRoute: typeof DashboardSettingsIndexRouteImport
+      parentRoute: typeof DashboardSettingsRoute
+    }
+    '/dashboard/projects/': {
+      id: '/dashboard/projects/'
+      path: '/'
+      fullPath: '/dashboard/projects/'
+      preLoaderRoute: typeof DashboardProjectsIndexRouteImport
+      parentRoute: typeof DashboardProjectsRoute
+    }
     '/dashboard/workers/$id': {
       id: '/dashboard/workers/$id'
       path: '/$id'
@@ -220,8 +343,64 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardWorkersIdRouteImport
       parentRoute: typeof DashboardWorkersRoute
     }
+    '/dashboard/settings/permissions': {
+      id: '/dashboard/settings/permissions'
+      path: '/permissions'
+      fullPath: '/dashboard/settings/permissions'
+      preLoaderRoute: typeof DashboardSettingsPermissionsRouteImport
+      parentRoute: typeof DashboardSettingsRoute
+    }
+    '/dashboard/settings/members': {
+      id: '/dashboard/settings/members'
+      path: '/members'
+      fullPath: '/dashboard/settings/members'
+      preLoaderRoute: typeof DashboardSettingsMembersRouteImport
+      parentRoute: typeof DashboardSettingsRoute
+    }
+    '/dashboard/projects/$id': {
+      id: '/dashboard/projects/$id'
+      path: '/$id'
+      fullPath: '/dashboard/projects/$id'
+      preLoaderRoute: typeof DashboardProjectsIdRouteImport
+      parentRoute: typeof DashboardProjectsRoute
+    }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
+
+interface DashboardProjectsRouteChildren {
+  DashboardProjectsIdRoute: typeof DashboardProjectsIdRoute
+  DashboardProjectsIndexRoute: typeof DashboardProjectsIndexRoute
+}
+
+const DashboardProjectsRouteChildren: DashboardProjectsRouteChildren = {
+  DashboardProjectsIdRoute: DashboardProjectsIdRoute,
+  DashboardProjectsIndexRoute: DashboardProjectsIndexRoute,
+}
+
+const DashboardProjectsRouteWithChildren =
+  DashboardProjectsRoute._addFileChildren(DashboardProjectsRouteChildren)
+
+interface DashboardSettingsRouteChildren {
+  DashboardSettingsMembersRoute: typeof DashboardSettingsMembersRoute
+  DashboardSettingsPermissionsRoute: typeof DashboardSettingsPermissionsRoute
+  DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
+}
+
+const DashboardSettingsRouteChildren: DashboardSettingsRouteChildren = {
+  DashboardSettingsMembersRoute: DashboardSettingsMembersRoute,
+  DashboardSettingsPermissionsRoute: DashboardSettingsPermissionsRoute,
+  DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
+}
+
+const DashboardSettingsRouteWithChildren =
+  DashboardSettingsRoute._addFileChildren(DashboardSettingsRouteChildren)
 
 interface DashboardWorkersRouteChildren {
   DashboardWorkersIdRoute: typeof DashboardWorkersIdRoute
@@ -239,7 +418,9 @@ const DashboardWorkersRouteWithChildren =
 interface DashboardRouteChildren {
   DashboardAiGatewayRoute: typeof DashboardAiGatewayRoute
   DashboardKvRoute: typeof DashboardKvRoute
+  DashboardProjectsRoute: typeof DashboardProjectsRouteWithChildren
   DashboardR2Route: typeof DashboardR2Route
+  DashboardSettingsRoute: typeof DashboardSettingsRouteWithChildren
   DashboardWorkersRoute: typeof DashboardWorkersRouteWithChildren
   DashboardZonesRoute: typeof DashboardZonesRoute
   DashboardIndexRoute: typeof DashboardIndexRoute
@@ -248,7 +429,9 @@ interface DashboardRouteChildren {
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAiGatewayRoute: DashboardAiGatewayRoute,
   DashboardKvRoute: DashboardKvRoute,
+  DashboardProjectsRoute: DashboardProjectsRouteWithChildren,
   DashboardR2Route: DashboardR2Route,
+  DashboardSettingsRoute: DashboardSettingsRouteWithChildren,
   DashboardWorkersRoute: DashboardWorkersRouteWithChildren,
   DashboardZonesRoute: DashboardZonesRoute,
   DashboardIndexRoute: DashboardIndexRoute,
@@ -261,6 +444,7 @@ const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRouteWithChildren,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

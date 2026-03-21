@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle, XCircle, Zap, Database } from "lucide-react";
+import { CheckCircle, XCircle, Zap, Database, DollarSign } from "lucide-react";
 import { listAiGatewayLogs } from "#/lib/cf-api";
 
 export function AiGatewayLogs({ gatewayId }: { gatewayId: string }) {
@@ -43,6 +43,7 @@ export function AiGatewayLogs({ gatewayId }: { gatewayId: string }) {
   }
 
   const stats = data.result_info;
+  const totalCost = data.result.reduce((sum, log) => sum + log.cost, 0);
 
   return (
     <div className="space-y-4">
@@ -50,6 +51,10 @@ export function AiGatewayLogs({ gatewayId }: { gatewayId: string }) {
         <div className="badge badge-lg gap-1.5">
           <Database className="size-3.5" />
           {stats.total_count} total requests
+        </div>
+        <div className="badge badge-lg badge-success gap-1.5">
+          <DollarSign className="size-3.5" />
+          ${totalCost.toFixed(4)} total cost
         </div>
       </div>
 

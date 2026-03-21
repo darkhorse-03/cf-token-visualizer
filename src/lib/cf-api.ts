@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getActiveToken } from "#/lib/token";
 import { getRequiredPermission } from "#/lib/permissions";
+import { resolveContext } from "#/lib/resolve-context";
 import type {
   Zone,
   ZonesResponse,
@@ -44,12 +44,6 @@ async function cfFetch<T>(path: string, token: string): Promise<T> {
   return json as T;
 }
 
-function requireToken(request: Request): string {
-  const token = getActiveToken(request);
-  if (!token) throw new Error("Not authenticated");
-  return token;
-}
-
 async function getAccountId(token: string): Promise<string> {
   const accounts = await cfFetch<AccountsResponse>("/accounts?per_page=1", token);
   const accountId = accounts.result[0]?.id;
@@ -57,11 +51,10 @@ async function getAccountId(token: string): Promise<string> {
   return accountId;
 }
 
+// verifyToken stays independent — used for personal token verification only
 export const verifyToken = createServerFn({ method: "POST" })
   .inputValidator((token: string) => token)
   .handler(async ({ data: token }) => {
-    // Use /accounts instead of /user/tokens/verify since account-scoped
-    // tokens don't have access to user-level endpoints
     const res = await cfFetch<AccountsResponse>("/accounts?per_page=1", token);
     if (res.result.length === 0) {
       throw new Error("Token is valid but has no account access");
@@ -71,17 +64,20 @@ export const verifyToken = createServerFn({ method: "POST" })
 
 export const listZones = createServerFn({ method: "GET" }).handler(
   async ({ request }) => {
-    const token = requireToken(request);
+    const ctx = await resolveContext(request);
     const zones: Zone[] = [];
     let page = 1;
     while (true) {
       const res = await cfFetch<ZonesResponse>(
         `/zones?page=${page}&per_page=50`,
-        token,
+        ctx.token,
       );
       zones.push(...res.result);
       if (page >= res.result_info.total_pages) break;
       page++;
+    }
+    if (ctx.filter) {
+      return zones.filter((z) => ctx.filter!(z.type === "full" ? "zone" : "zone", z.id));
     }
     return zones;
   },
@@ -90,13 +86,17 @@ export const listZones = createServerFn({ method: "GET" }).handler(
 export const listDnsRecords = createServerFn({ method: "POST" })
   .inputValidator((zoneId: string) => zoneId)
   .handler(async ({ request, data: zoneId }) => {
-    const token = requireToken(request);
+    const ctx = await resolveContext(request);
+    // In org mode, check the user has access to the parent zone
+    if (ctx.filter && !ctx.filter("zone", zoneId)) {
+      throw new Error("Access denied");
+    }
     const records: DnsRecord[] = [];
     let page = 1;
     while (true) {
       const res = await cfFetch<DnsRecordsResponse>(
         `/zones/${encodeURIComponent(zoneId)}/dns_records?page=${page}&per_page=100`,
-        token,
+        ctx.token,
       );
       records.push(...res.result);
       if (page >= res.result_info.total_pages) break;
@@ -107,16 +107,33 @@ export const listDnsRecords = createServerFn({ method: "POST" })
 
 export const getAccountOverview = createServerFn({ method: "GET" }).handler(
   async ({ request }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    const accountId = await getAccountId(ctx.token);
 
     const [zones, workers, r2, kv, aiGateways] = await Promise.allSettled([
-      cfFetch<ZonesResponse>("/zones?per_page=1", token),
-      cfFetch<WorkersResponse>(`/accounts/${accountId}/workers/scripts`, token),
-      cfFetch<R2Response>(`/accounts/${accountId}/r2/buckets`, token),
-      cfFetch<KvResponse>(`/accounts/${accountId}/storage/kv/namespaces`, token),
-      cfFetch<AiGatewayResponse>(`/accounts/${accountId}/ai-gateway/gateways?per_page=1`, token),
+      cfFetch<ZonesResponse>("/zones?per_page=1", ctx.token),
+      cfFetch<WorkersResponse>(`/accounts/${accountId}/workers/scripts`, ctx.token),
+      cfFetch<R2Response>(`/accounts/${accountId}/r2/buckets`, ctx.token),
+      cfFetch<KvResponse>(`/accounts/${accountId}/storage/kv/namespaces`, ctx.token),
+      cfFetch<AiGatewayResponse>(`/accounts/${accountId}/ai-gateway/gateways?per_page=1`, ctx.token),
     ]);
+
+    if (ctx.filter) {
+      // In org mode, count only permitted resources
+      const workerList = workers.status === "fulfilled" ? workers.value.result : [];
+      const zoneList = zones.status === "fulfilled" ? zones.value.result : [];
+      const r2List = r2.status === "fulfilled" ? r2.value.result.buckets : [];
+      const kvList = kv.status === "fulfilled" ? kv.value.result : [];
+      const gwList = aiGateways.status === "fulfilled" ? aiGateways.value.result : [];
+
+      return {
+        zones: zoneList.filter((z) => ctx.filter!("zone", z.id)).length,
+        workers: workerList.filter((w) => ctx.filter!("worker", w.id)).length,
+        r2Buckets: r2List.filter((b) => ctx.filter!("r2_bucket", b.name)).length,
+        kvNamespaces: kvList.filter((n) => ctx.filter!("kv_namespace", n.id)).length,
+        aiGateways: gwList.filter((g) => ctx.filter!("ai_gateway", g.id)).length,
+      } satisfies AccountOverview;
+    }
 
     return {
       zones: zones.status === "fulfilled" ? zones.value.result_info?.total_count ?? zones.value.result.length : 0,
@@ -130,12 +147,15 @@ export const getAccountOverview = createServerFn({ method: "GET" }).handler(
 
 export const listWorkers = createServerFn({ method: "GET" }).handler(
   async ({ request }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    const accountId = await getAccountId(ctx.token);
     const res = await cfFetch<WorkersResponse>(
       `/accounts/${accountId}/workers/scripts`,
-      token,
+      ctx.token,
     );
+    if (ctx.filter) {
+      return res.result.filter((w) => ctx.filter!("worker", w.id));
+    }
     return res.result;
   },
 );
@@ -143,11 +163,14 @@ export const listWorkers = createServerFn({ method: "GET" }).handler(
 export const getWorkerSettings = createServerFn({ method: "POST" })
   .inputValidator((scriptName: string) => scriptName)
   .handler(async ({ request, data: scriptName }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    if (ctx.filter && !ctx.filter("worker", scriptName)) {
+      throw new Error("Access denied");
+    }
+    const accountId = await getAccountId(ctx.token);
     const res = await cfFetch<WorkerSettingsResponse>(
       `/accounts/${accountId}/workers/scripts/${encodeURIComponent(scriptName)}/settings`,
-      token,
+      ctx.token,
     );
     return res.result;
   });
@@ -155,8 +178,11 @@ export const getWorkerSettings = createServerFn({ method: "POST" })
 export const getWorkerAnalytics = createServerFn({ method: "POST" })
   .inputValidator((scriptName: string) => scriptName)
   .handler(async ({ request, data: scriptName }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    if (ctx.filter && !ctx.filter("worker", scriptName)) {
+      throw new Error("Access denied");
+    }
+    const accountId = await getAccountId(ctx.token);
     const now = new Date();
     const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -181,7 +207,7 @@ export const getWorkerAnalytics = createServerFn({ method: "POST" })
     const res = await fetch(`${CF_API}/graphql`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${ctx.token}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ query }),
@@ -224,8 +250,11 @@ export const getWorkerAnalytics = createServerFn({ method: "POST" })
 export const getWorkerLogs = createServerFn({ method: "POST" })
   .inputValidator((scriptName: string) => scriptName)
   .handler(async ({ request, data: scriptName }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    if (ctx.filter && !ctx.filter("worker", scriptName)) {
+      throw new Error("Access denied");
+    }
+    const accountId = await getAccountId(ctx.token);
     const now = Date.now();
     const dayAgo = now - 24 * 60 * 60 * 1000;
 
@@ -234,7 +263,7 @@ export const getWorkerLogs = createServerFn({ method: "POST" })
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${ctx.token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -273,7 +302,6 @@ export const getWorkerLogs = createServerFn({ method: "POST" })
 
     const invocations = json.result?.invocations ?? {};
 
-    // First event has request info, last event (cf-worker-event) has timing
     return Object.entries(invocations).map(([requestId, events]) => {
       const first = events[0] ?? {};
       const last = events[events.length - 1] ?? {};
@@ -301,12 +329,15 @@ export const getWorkerLogs = createServerFn({ method: "POST" })
 
 export const listAiGateways = createServerFn({ method: "GET" }).handler(
   async ({ request }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    const accountId = await getAccountId(ctx.token);
     const res = await cfFetch<AiGatewayResponse>(
       `/accounts/${accountId}/ai-gateway/gateways?per_page=100`,
-      token,
+      ctx.token,
     );
+    if (ctx.filter) {
+      return res.result.filter((g) => ctx.filter!("ai_gateway", g.id));
+    }
     return res.result;
   },
 );
@@ -314,11 +345,14 @@ export const listAiGateways = createServerFn({ method: "GET" }).handler(
 export const listAiGatewayLogs = createServerFn({ method: "POST" })
   .inputValidator((gatewayId: string) => gatewayId)
   .handler(async ({ request, data: gatewayId }) => {
-    const token = requireToken(request);
-    const accountId = await getAccountId(token);
+    const ctx = await resolveContext(request);
+    if (ctx.filter && !ctx.filter("ai_gateway", gatewayId)) {
+      throw new Error("Access denied");
+    }
+    const accountId = await getAccountId(ctx.token);
     const res = await cfFetch<AiGatewayLogsResponse>(
       `/accounts/${accountId}/ai-gateway/gateways/${encodeURIComponent(gatewayId)}/logs?per_page=50&order_by=created_at&order_by_direction=desc`,
-      token,
+      ctx.token,
     );
     return res;
   });
